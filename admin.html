@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | VectorWeb</title>
+  <meta name="description" content="Admin dashboard for VectorWeb digital agency booking management">
+  
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="./assets/images/favicon.ico" type="image/x-icon">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;500;600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  
+  <!-- Ion Icon -->
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="./assets/css/style.css">
+  
+  <style>
+    /* Admin-specific styles */
+    .admin-login {
+      background: linear-gradient(135deg, var(--kappel), hsl(170, 75%, 35%));
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .login-container {
+      background: var(--white);
+      border-radius: var(--radius-10);
+      box-shadow: var(--shadow-4);
+      padding: 40px;
+      width: 100%;
+      max-width: 450px;
+      text-align: center;
+    }
+    
+    .login-container h1 {
+      color: var(--kappel);
+      margin-bottom: 20px;
+      font-size: var(--fs-3);
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--eerie-black-1);
+      font-weight: var(--fw-500);
+    }
+    
+    .input-field {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid var(--platinum);
+      border-radius: var(--radius-5);
+      font-size: var(--fs-6);
+      transition: var(--transition-1);
+      background: var(--white);
+    }
+    
+    .input-field:focus {
+      border-color: var(--kappel);
+      outline: none;
+    }
+    
+    .btn-login {
+      background: var(--kappel);
+      color: var(--white);
+      border: none;
+      padding: 12px 20px;
+      border-radius: var(--radius-5);
+      font-size: var(--fs-6);
+      font-weight: var(--fw-600);
+      cursor: pointer;
+      width: 100%;
+      transition: var(--transition-1);
+    }
+    
+    .btn-login:hover {
+      background: hsl(170, 75%, 35%);
+    }
+    
+    .admin-dashboard {
+      display: none;
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+    
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid var(--platinum);
+    }
+    
+    .dashboard-header h1 {
+      color: var(--kappel);
+      margin: 0;
+    }
+    
+    .btn-logout {
+      background: var(--selective-yellow);
+      color: var(--eerie-black-1);
+      border: none;
+      padding: 10px 20px;
+      border-radius: var(--radius-5);
+      font-size: var(--fs-6);
+      font-weight: var(--fw-600);
+      cursor: pointer;
+      transition: var(--transition-1);
+    }
+    
+    .btn-logout:hover {
+      background: hsl(42, 94%, 65%);
+    }
+    
+    .bookings-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .booking-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 25px;
+    }
+    
+    .booking-card {
+      background: var(--white);
+      border-radius: var(--radius-10);
+      box-shadow: var(--shadow-2);
+      padding: 25px;
+      transition: var(--transition-1);
+      border: 1px solid var(--platinum);
+    }
+    
+    .booking-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-4);
+    }
+    
+    .booking-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--platinum);
+    }
+    
+    .booking-id {
+      font-family: var(--ff-league_spartan);
+      font-weight: var(--fw-700);
+      color: var(--kappel);
+    }
+    
+    .booking-date {
+      font-size: var(--fs-8);
+      color: var(--gray-web);
+    }
+    
+    .booking-details {
+      margin-bottom: 15px;
+    }
+    
+    .detail-item {
+      display: flex;
+      margin-bottom: 8px;
+    }
+    
+    .detail-label {
+      font-weight: var(--fw-600);
+      color: var(--eerie-black-1);
+      min-width: 120px;
+    }
+    
+    .detail-value {
+      color: var(--gray-web);
+      flex: 1;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+      font-size: var(--fs-5);
+      color: var(--gray-web);
+    }
+    
+    .no-bookings {
+      text-align: center;
+      padding: 40px;
+      color: var(--gray-web);
+    }
+    
+    .error-message {
+      background: #f44336;
+      color: white;
+      padding: 15px;
+      border-radius: var(--radius-5);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    @media (max-width: 768px) {
+      .login-container {
+        padding: 30px 20px;
+      }
+      
+      .booking-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Admin Login Section -->
+  <section class="admin-login" id="loginSection">
+    <div class="login-container">
+      <h1>Admin Login</h1>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="adminId">Admin ID</label>
+          <input type="text" id="adminId" class="input-field" placeholder="Enter admin ID" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="adminPass">Password</label>
+          <input type="password" id="adminPass" class="input-field" placeholder="Enter password" required>
+        </div>
+        
+        <button type="submit" class="btn-login">Login</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Admin Dashboard Section -->
+  <section class="admin-dashboard" id="dashboardSection">
+    <div class="container">
+      <div class="dashboard-header">
+        <h1>Booking Management Dashboard</h1>
+        <button class="btn-logout" id="logoutBtn">Logout</button>
+      </div>
+      
+      <div class="bookings-container">
+        <div id="bookingsContent">
+          <div class="loading">
+            <p>Loading bookings...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    /* Import Firebase SDKs */
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
+
+    /* Firebase Configuration */
+    const firebaseConfig = {
+      apiKey: "AIzaSyAAmBMuwRj6mjh3LBEmRPARRh0VaIrBmJk",
+      authDomain: "ectordeploy.firebaseapp.com",
+      databaseURL: "https://ectordeploy-default-rtdb.firebaseio.com",
+      projectId: "ectordeploy",
+      storageBucket: "ectordeploy.firebasestorage.app",
+      messagingSenderId: "43139715696",
+      appId: "1:43139715696:web:b56a3ce955218ccf019ab5",
+      measurementId: "G-SHKNHQZ5BR"
+    };
+
+    /* Initialize Firebase */
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    const database = getDatabase(app);
+    
+    // Admin credentials
+    const ADMIN_ID = "admin";
+    const ADMIN_PASS = "admin123";
+    
+    // DOM Elements
+    const loginSection = document.getElementById('loginSection');
+    const dashboardSection = document.getElementById('dashboardSection');
+    const loginForm = document.getElementById('loginForm');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const bookingsContent = document.getElementById('bookingsContent');
+    
+    // Login functionality
+    loginForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const adminId = document.getElementById('adminId').value;
+      const adminPass = document.getElementById('adminPass').value;
+      
+      if (adminId === ADMIN_ID && adminPass === ADMIN_PASS) {
+        loginSection.style.display = 'none';
+        dashboardSection.style.display = 'block';
+        loadBookings();
+      } else {
+        alert('Invalid credentials. Please try again.');
+      }
+    });
+    
+    // Logout functionality
+    logoutBtn.addEventListener('click', function() {
+      loginSection.style.display = 'flex';
+      dashboardSection.style.display = 'none';
+      document.getElementById('loginForm').reset();
+    });
+    
+    // Load bookings from Realtime Database
+    function loadBookings() {
+      console.log('Loading bookings from Realtime Database...');
+      const bookingsRef = ref(database, 'bookings');
+      
+      onValue(bookingsRef, (snapshot) => {
+        console.log('Received snapshot with data');
+        const bookings = [];
+        
+        snapshot.forEach((childSnapshot) => {
+          const bookingData = childSnapshot.val();
+          bookings.push({
+            id: childSnapshot.key,
+            ...bookingData
+          });
+        });
+        
+        // Reverse to show newest first
+        bookings.reverse();
+        
+        console.log('Displaying', bookings.length, 'bookings');
+        displayBookings(bookings);
+      }, (error) => {
+        console.error('Error fetching bookings:', error);
+        bookingsContent.innerHTML = '<div class="error-message">Error loading bookings. Please try again.</div>';
+      });
+    }
+    
+    // Display bookings in the dashboard
+    function displayBookings(bookings) {
+      console.log('Display bookings function called with', bookings.length, 'items');
+      if (bookings.length === 0) {
+        bookingsContent.innerHTML = '<div class="no-bookings"><h3>No bookings found</h3><p>There are no booking requests at the moment.</p></div>';
+        return;
+      }
+      
+      let bookingsHTML = '<div class="booking-grid">';
+      
+      bookings.forEach(booking => {
+        const date = booking.createdAt ? new Date(booking.createdAt).toLocaleString() : 'N/A';
+        
+        bookingsHTML += `
+          <div class="booking-card">
+            <div class="booking-header">
+              <div class="booking-id">#${booking.id.substring(0, 8)}</div>
+              <div class="booking-date">${date}</div>
+            </div>
+            
+            <div class="booking-details">
+              <div class="detail-item">
+                <div class="detail-label">Name:</div>
+                <div class="detail-value">${booking.fullName || 'N/A'}</div>
+              </div>
+              
+              <div class="detail-item">
+                <div class="detail-label">Email:</div>
+                <div class="detail-value">${booking.email || 'N/A'}</div>
+              </div>
+              
+              <div class="detail-item">
+                <div class="detail-label">Phone:</div>
+                <div class="detail-value">${booking.phone || 'N/A'}</div>
+              </div>
+              
+              <div class="detail-item">
+                <div class="detail-label">Service:</div>
+                <div class="detail-value">${booking.service ? getServiceName(booking.service) : 'N/A'}</div>
+              </div>
+              
+              <div class="detail-item">
+                <div class="detail-label">Budget:</div>
+                <div class="detail-value">${booking.budget ? getBudgetRange(booking.budget) : 'N/A'}</div>
+              </div>
+              
+              <div class="detail-item">
+                <div class="detail-label">Timeline:</div>
+                <div class="detail-value">${booking.timeline ? getTimeline(booking.timeline) : 'N/A'}</div>
+              </div>
+              
+              <div class="detail-item">
+                <div class="detail-label">Message:</div>
+                <div class="detail-value">${booking.message || 'N/A'}</div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      bookingsHTML += '</div>';
+      bookingsContent.innerHTML = bookingsHTML;
+    }
+    
+    // Helper functions to convert values to readable format
+    function getServiceName(serviceValue) {
+      const serviceMap = {
+        'web-development': 'Web Development',
+        'app-development': 'App Development',
+        'branding-logo': 'Branding & Logo Design',
+        'digital-marketing': 'Digital Marketing',
+        'social-media': 'Social Media Management',
+        'digital-strategy': 'Digital Strategy'
+      };
+      return serviceMap[serviceValue] || serviceValue;
+    }
+    
+    function getBudgetRange(budgetValue) {
+      const budgetMap = {
+        'under-30k': 'Under ₹4,999',
+        '30k-50k': '₹5,000 - ₹10,000',
+        '50k-1lakh': '₹10,000 - ₹20,000',
+        '1lakh-3lakh': '₹20,000 - ₹30,000',
+        'over-3lakh': 'Over ₹30,000'
+      };
+      return budgetMap[budgetValue] || budgetValue;
+    }
+    
+    function getTimeline(timelineValue) {
+      const timelineMap = {
+        'asap': 'ASAP',
+        '1-2-weeks': '1-2 Weeks',
+        '1-month': '1 Month',
+        '2-3-months': '2-3 Months',
+        '3-months-plus': '3+ Months'
+      };
+      return timelineMap[timelineValue] || timelineValue;
+    }
+  </script>
+</body>
+
+</html>
